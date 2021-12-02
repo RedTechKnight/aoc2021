@@ -1,0 +1,9 @@
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <utility>
+#include <vector>
+void day1();
+void day2();
+#pragma once
