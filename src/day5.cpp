@@ -11,16 +11,26 @@ struct line {
 void day5() {
   std::ifstream file("inputs/day5");
   std::vector<line> lines;
-  point max = point{};
+  point max;
   while (file.good()) {
-    line l = line{};
-    file >> l.a.x;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), ',');
-    file >> l.a.y;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '>');
-    file >> l.b.x;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), ',');
-    file >> l.b.y;
+    std::string next = "";
+    std::getline(file, next);
+
+    if (next.empty()) {
+      continue;
+    }
+    std::replace(next.begin(), next.end(), ',', ' ');
+    std::replace(next.begin(), next.end(), '-', ' ');
+    std::replace(next.begin(), next.end(), '>', ' ');
+
+    std::stringstream stream(next);
+    line l;
+
+    stream >> l.a.x;
+    stream >> l.a.y;
+    stream >> l.b.x;
+    stream >> l.b.y;
+
     max.x = std::max(max.x, std::max(l.a.x, l.b.x));
     max.y = std::max(max.y, std::max(l.a.y, l.b.y));
     lines.push_back(l);
@@ -36,6 +46,7 @@ void day5() {
     }
     return a;
   };
+  
   for (const auto &line : lines) {
     if (line.a.x == line.b.x) {
       for (int i = std::min(line.a.y, line.b.y);
