@@ -33,7 +33,7 @@ int step(int width, int height, std::vector<Octopus> &octopii) {
       if (octo.energy > 9) {
         octo.energy = 0;
         octo.flashed = true;
-	flashes++;
+        flashes++;
         auto adj = adjacent(width, height, octo.x, octo.y, octopii);
         for (auto adjacent_octo : adj) {
           if (!adjacent_octo.flashed) {
@@ -43,7 +43,7 @@ int step(int width, int height, std::vector<Octopus> &octopii) {
       }
     }
   }
-  for(auto &octo : octopii) {
+  for (auto &octo : octopii) {
     octo.flashed = false;
   }
   return flashes;
@@ -51,7 +51,7 @@ int step(int width, int height, std::vector<Octopus> &octopii) {
 
 void show(int width, int height, std::vector<Octopus> &octopii) {
   for (int i = 0; i < height; i++) {
-    for(int j = 0;j < width;j++) {
+    for (int j = 0; j < width; j++) {
       std::cout << octopii[width * i + j].energy;
     }
     std::cout << std::endl;
@@ -73,28 +73,28 @@ void day11() {
         octo.x = i;
         octo.y = height - 1;
         octo.energy = std::stoi(row.substr(i, 1));
-	
+
         octo.flashed = false;
         octopii.push_back(octo);
       }
-      
     }
   }
 
   int flashes = 0;
   int steps = 0;
   int sync = 0;
-  while(true) {
-    int flash = step(width,height,octopii); 
-    if(flash == 100) {
+  while (true) {
+    int flash = step(width, height, octopii);
+    if (flash == 100) {
       sync = steps;
       break;
     }
-    if(steps < 100) {
+    if (steps < 100) {
       flashes += flash;
     }
-    
+
     steps++;
   }
-  std::cout << "Day 11 => Part 1: " << flashes << " - Part 2: " << steps +1<< std::endl;
+  std::cout << "Day 11 => Part 1: " << flashes << " - Part 2: " << steps + 1
+            << std::endl;
 }

@@ -1,6 +1,5 @@
 #include "main.hpp"
 
-
 std::uint64_t solve(std::string &stack, std::string &input) {
   std::map<char, char> matches;
   std::map<char, std::uint64_t> scores;
