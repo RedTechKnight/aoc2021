@@ -49,15 +49,6 @@ int step(int width, int height, std::vector<Octopus> &octopii) {
   return flashes;
 }
 
-void show(int width, int height, std::vector<Octopus> &octopii) {
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-      std::cout << octopii[width * i + j].energy;
-    }
-    std::cout << std::endl;
-  }
-}
-
 void day11() {
   std::ifstream file("inputs/day11");
   std::vector<Octopus> octopii;
