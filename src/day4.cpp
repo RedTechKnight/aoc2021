@@ -54,40 +54,43 @@ int rem(const board &b) {
   return res;
 }
 
-void play(std::vector<board> &boards, std::vector<int> &nums) {
+int play(std::vector<board> &boards, std::vector<int> &nums) {
   for (auto num : nums) {
     for (auto &board : boards) {
       mark(board, num);
       if (win(board)) {
-        std::cout << "Winner: " << rem(board) * num << std::endl;
-        return;
+
+        return rem(board) * num;
       }
     }
   }
+  return 0;
 }
 
-void play_p2(std::vector<board> &boards, std::vector<int> &nums) {
+int play_p2(std::vector<board> &boards, std::vector<int> &nums) {
   int last_winners = 0;
   for (auto num : nums) {
     for (auto &board : boards) {
       mark(board, num);
       if (win(board)) {
         if (last_winners == boards.size() - 1 && !board.won) {
-          std::cout << "Last :" << rem(board) * num << std::endl;
-          return;
+
+          return rem(board) * num;
         }
         board.won = true;
       }
     }
-    last_winners = std::count_if(boards.begin(),boards.end(),[](const board& b){return win(b);});
+    last_winners = std::count_if(boards.begin(), boards.end(),
+                                 [](const board &b) { return win(b); });
   }
+  return 0;
 }
 
 void day4() {
   std::ifstream file("inputs/day4");
   std::string line;
 
-  file >> line; 
+  file >> line;
   std::transform(line.begin(), line.end(), line.begin(),
                  [](char c) { return c == ',' ? ' ' : c; });
   std::stringstream draw(line);
@@ -111,6 +114,6 @@ void day4() {
     }
     boards.push_back(b);
   }
-  play(boards, nums);
-  play_p2(boards, nums);
+  std::cout << "Day 4 => Part 1: " << play(boards, nums)
+            << " - Part 2: " << play_p2(boards, nums) << std::endl;
 }

@@ -34,10 +34,9 @@ void day3() {
     }
   }
 
-  std::cout << std::endl
+  std::cout << "Day 3 => Part 1: "
             << bit_string_to_decimal(most_common) *
-                   bit_string_to_decimal(least_common)
-            << std::endl;
+                   bit_string_to_decimal(least_common);
   std::vector<std::string> lines_b;
   for (auto line : lines) {
     lines_b.push_back(line);
@@ -115,7 +114,7 @@ void day3() {
       break;
     }
   }
-  std::cout << "Part 2: "
+  std::cout << "- Part 2: "
             << bit_string_to_decimal(lines[0]) *
                    bit_string_to_decimal(lines_b[0])
             << std::endl;
