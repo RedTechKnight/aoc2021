@@ -1,43 +1,5 @@
 #include "main.hpp"
-//[({(<(())[]>[[{[]{<()<>>
-char match(char sym, std::string &input, int &pos, char &mismatch,
-           std::string &opened) {
-  pos++;
-  std::map<char, char> matches;
 
-  if (input[0] == '(' || input[0] == '[' || input[0] == '{' ||
-      input[0] == '<') {
-
-    char next = input[0];
-    input.erase(input.begin());
-    if (input.size() < 1) {
-      std::cout << matches[next] << sym;
-      return ' ';
-    }
-
-    match(next, input, pos, mismatch, opened);
-    if (mismatch == ' ') {
-      auto res = match(sym, input, pos, mismatch, opened);
-      if (input.size() < 1) {
-        std::cout << matches[sym];
-      }
-      return res;
-    } else {
-      return mismatch;
-    }
-  } else if (matches[sym] != input[0]) {
-
-    mismatch = input[0];
-    return input[0];
-  } else if (matches[sym] == input[0]) {
-    input.erase(input.begin());
-
-    return ' ';
-  } else {
-    std::cout << "else";
-  }
-  return ' ';
-}
 
 std::uint64_t solve(std::string &stack, std::string &input) {
   std::map<char, char> matches;
