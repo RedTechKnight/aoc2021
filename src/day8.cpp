@@ -64,6 +64,7 @@ void day8() {
   }
   auto println = [](std::string s) -> void { std::cout << s << std::endl; };
   std::uint64_t value = 0;
+  int part1 = 0;
   for (auto input : inputs) {
     std::stringstream sig_stream(input.first);
     std::array<std::string, 10> as;
@@ -107,10 +108,14 @@ void day8() {
     std::stringstream outputs(input.second);
     std::string val;
     while (outputs.good()) {
+
       std::string output;
 
       outputs >> output;
-
+      if (output.size() == 2 || output.size() == 3 || output.size() == 4 ||
+          output.size() == 7) {
+        part1++;
+      }
       for (int i = 0; i < as.size(); i++) {
         if (output.size() == as[i].size() && same_elements(output, as[i]))
           val.append(std::to_string(i));
@@ -119,5 +124,6 @@ void day8() {
 
     value += std::stoi(val);
   }
-  std::cout << "Day 8 => Part 2: " << value << std::endl;
+  std::cout << "Day 8 => Part 1: " << part1 << " - Part 2: " << value
+            << std::endl;
 }

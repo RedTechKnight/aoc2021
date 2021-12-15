@@ -1,82 +1,41 @@
 #include "main.hpp"
-
-int path_count_part1(std::map<std::string, std::vector<std::string>> &paths,
-                     std::map<std::string, int> visited, std::string start) {
-
-  if (start == "end") {
-    return 1;
-  }
-
-  visited[start]++;
-
-  std::vector<std::string> destinations;
-
-  destinations = paths[start];
-  if (destinations.empty()) {
-    return 0;
-  }
-  int num_paths = 0;
-  for (auto dest : destinations) {
-    if (visited[dest] > 0 && std::all_of(dest.begin(), dest.end(), [](char c) {
-          return std::islower(c);
-        })) {
-      continue;
-    }
-
-    num_paths += path_count_part1(paths, visited, dest);
-  }
-  return num_paths;
-}
-
-int path_count_part2_b(std::map<std::string, std::vector<std::string>> &paths,
-                       std::map<std::string, int> visited, std::string start) {
-
-  if (start == "end") {
-    return 1;
-  }
-
-  std::vector<std::string> destinations;
-
-  destinations = paths[start];
-  if (destinations.empty()) {
-    return 0;
-  }
-  int num_paths = 0;
-  visited[start]++;
-  for (auto dest : destinations) {
-    if (visited[dest] > 0 && std::all_of(dest.begin(), dest.end(), [](char c) {
-          return std::islower(c);
-        })) {
-      if (visited[dest] > 1)
-        continue;
-      bool others_visited =
-          dest != "start" && dest != "end" &&
-          std::any_of(
-              visited.begin(), visited.end(),
-              [dest](std::pair<std::string, int> visited_node) -> bool {
-                if (visited_node.first != "start" &&
-                    visited_node.first != "end" && visited_node.first != dest &&
-                    std::all_of(visited_node.first.begin(),
-                                visited_node.first.end(),
-                                [](char c) { return std::islower(c); })) {
-                  return visited_node.second > 1;
-                }
-                return false;
-              });
-      if(others_visited)
-        continue;
-    }
-
-    
-    num_paths += path_count_part2_b(paths, visited, dest);
-  }
-  return num_paths;
-}
-
 struct RouteState {
   std::string label;
   std::map<std::string, int> visited;
 };
+
+int path_count_part1(std::map<std::string, std::vector<std::string>> &edges) {
+  int paths = 0;
+  std::vector<RouteState> to_visit;
+  to_visit.push_back(RouteState{"start", std::map<std::string, int>()});
+  while (!to_visit.empty()) {
+
+    auto current = to_visit.back();
+    current.visited.emplace(current.label, 0);
+    to_visit.pop_back();
+
+    if (current.label == "end") {
+      paths += 1;
+      continue;
+    }
+
+    bool small_cave = current.label != "start" && current.label != "end" &&
+                      std::all_of(current.label.begin(), current.label.end(),
+                                  [](char c) { return std::islower(c); });
+
+    if (small_cave && current.visited[current.label] > 0) {
+      continue;
+    }
+
+    current.visited[current.label]++;
+
+    for (auto next : edges[current.label]) {
+      if (next != "start")
+        to_visit.push_back(RouteState{next, current.visited});
+    }
+  }
+  return paths;
+}
 
 int path_count_part2(std::map<std::string, std::vector<std::string>> edges) {
   int paths = 0;
@@ -129,7 +88,7 @@ int path_count_part2(std::map<std::string, std::vector<std::string>> edges) {
 }
 
 void day12() {
-  std::ifstream file("sample/day12_mini");
+  std::ifstream file("inputs/day12");
   std::map<std::string, std::vector<std::string>> edges;
   while (file.good()) {
     std::string edge;
@@ -147,7 +106,6 @@ void day12() {
   }
   std::map<std::string, int> visited;
 
-  std::cout << "Day 12 => Part 1: " << path_count_part1(edges, visited, "start")
-            << " - Part 2: " << path_count_part2_b(edges, visited, "start")
-            << std::endl;
+  std::cout << "Day 12 => Part 1: " << path_count_part1(edges)
+            << " - Part 2: " << path_count_part2(edges) << std::endl;
 }
