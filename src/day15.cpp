@@ -1,7 +1,7 @@
 #include "main.hpp"
 
 struct Cell {
-  int x, y;
+  std::pair<int, int> pos;
   int risk;
   int distance;
   std::vector<std::pair<int, int>> adjacent;
@@ -15,10 +15,14 @@ public:
 };
 
 void day15() {
-  std::ifstream file("sample/day15");
+  std::ifstream file("inputs/day15");
   std::map<std::pair<int, int>, Cell> grid;
+
+  int grid_size = 0;
+
+  auto start = std::make_pair(0, 0);
+
   int height = 0;
-  int width = 0;
   while (file.good()) {
     std::string line;
     file >> line;
@@ -26,20 +30,34 @@ void day15() {
       continue;
     }
 
-    width = line.size();
-    for (int i = 0; i < line.size(); i++) {
-      grid[std::pair(i, height)] = Cell{
-          i, height, i == 0 && height == 0 ? 0 : std::stoi(line.substr(i, 1)),
-          i == 0 && height == 0 ? 0 : 999999};
+    grid_size = line.size();
+    for (int c = 0; c < line.size(); c++) {
+
+      for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+          auto pos = std::make_pair(c + grid_size * i, height + grid_size * j);
+          int risk = std::stoi(line.substr(c, 1));
+
+          risk = risk + i + j;
+          if (risk > 9) {
+            risk -= 9;
+          }
+
+          grid[pos] = Cell{pos, risk, 9999999};
+        }
+      }
     }
     height++;
   }
+  grid[start].risk = 0;
+  grid[start].distance = 0;
+  grid_size = grid_size * 5;
+  auto dest_p1 = std::make_pair(grid_size / 5 - 1, grid_size / 5 - 1);
+  auto dest_p2 = std::make_pair(grid_size - 1, grid_size - 1);
 
-  std::map<std::pair<int, int>, bool> unvisited;
   for (auto &cell : grid) {
-    unvisited.emplace(cell.first, true);
 
-    if (cell.first.first + 1 < width) {
+    if (cell.first.first + 1 < grid_size) {
       cell.second.adjacent.push_back(
           std::pair(cell.first.first + 1, cell.first.second));
     }
@@ -47,7 +65,7 @@ void day15() {
       cell.second.adjacent.push_back(
           std::pair(cell.first.first - 1, cell.first.second));
     }
-    if (cell.first.second + 1 < height) {
+    if (cell.first.second + 1 < grid_size) {
       cell.second.adjacent.push_back(
           std::pair(cell.first.first, cell.first.second + 1));
     }
@@ -57,19 +75,17 @@ void day15() {
           std::pair(cell.first.first, cell.first.second - 1));
     }
   }
-  auto dest = std::make_pair(width - 1, height - 1);
 
   std::priority_queue<Cell, std::vector<Cell>, CellCompare> to_visit;
-  to_visit.push(grid[std::pair(0, 0)]);
+  to_visit.push(grid[start]);
   while (!to_visit.empty()) {
 
-    auto current = to_visit.top();
+    auto current = to_visit.top().pos;
     to_visit.pop();
-    auto current_coord = std::pair(current.x, current.y);
 
-    for (auto next : grid[current_coord].adjacent) {
+    for (auto next : grid[current].adjacent) {
 
-      int dist = grid[current_coord].distance + grid[next].risk;
+      int dist = grid[current].distance + grid[next].risk;
       if (dist < grid[next].distance) {
         grid[next].distance = dist;
         to_visit.push(grid[next]);
@@ -77,8 +93,9 @@ void day15() {
     }
   }
 
-  int lowest_p1 = grid[dest].distance;
+  int lowest_p1 = grid[dest_p1].distance;
+  int lowest_p2 = grid[dest_p2].distance;
 
-  std::cout << "Day 15 => Part 1: " << lowest_p1 
+  std::cout << "Day 15 => Part 1: " << lowest_p1 << " - Part 2: " << lowest_p2
             << std::endl;
 }

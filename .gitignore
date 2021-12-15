@@ -7,3 +7,5 @@ compile_commands.json
 temp/
 .clang-format
 sample/
+.vscode/
+vgcore.*
